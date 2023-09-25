@@ -1,0 +1,418 @@
+<html>
+
+<head>
+	<!-- htmlファイルと同じフォルダにあるjQuery.jsを読み込む -->
+	<script type="text/javascript" src="../common/jQuery.js"></script>
+	<!-- 文字コードをUTF-8に設定（文字化け防止） -->
+	<meta charset="UTF-8">
+	<!-- タイトル -->
+	<title>電卓</title>
+
+	<style>
+    	/* ここにCSSを書く */
+		input{
+			width: 275px;
+		}
+
+		button{
+			/* width: 15%;
+			height: 15%; */
+			width: 50px;
+			height: 30px;
+		}
+
+		#display{
+			text-align: right;
+		}
+	</style>
+</head>
+
+<body>
+    <!-- ここに画面に表示する内容を書く -->
+	<div id="calculator">
+		<table>
+			<tr>
+				<td>
+					<input type="text" id="display" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<!-- 戻るボタン -->
+					<button class="button" id="button_back">▷</button>
+
+					<!-- 7ボタン -->
+					<button class="button" id="button_7">7</button>
+
+					<!-- 8ボタン -->
+					<button class="button" id="button_8">8</button>
+
+					<!-- 9ボタン -->
+					<button class="button" id="button_9">9</button>
+
+					<!-- 割り算ボタン -->
+					<button class="button" id="button_division">÷</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<!-- クリアボタン -->
+					<button class="button" id="button_c">C</button>
+
+					<!-- 4ボタン -->
+					<button class="button" id="button_4">4</button>
+
+					<!-- 5ボタン -->
+					<button class="button" id="button_5">5</button>
+
+					<!-- 6ボタン -->
+					<button class="button" id="button_6">6</button>
+
+					<!-- 掛け算ボタン -->
+					<button class="button" id="button_multiplication">×</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<!-- オールクリアボタン -->
+					<button class="button" id="button_ac">AC</button>
+
+					<!-- 1ボタン -->
+					<button class="button" id="button_1">1</button>
+
+					<!-- 2ボタン -->
+					<button class="button" id="button_2">2</button>
+
+					<!-- 3ボタン -->
+					<button class="button" id="button_3">3</button>
+
+					<!-- 引き算ボタン -->
+					<button class="button" id="button_subtraction">-</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<!-- 0ボタン -->
+					<button class="button" id="button_0">0</button>
+
+					<!-- 00ボタン -->
+					<button class="button" id="button_00">00</button>
+
+					<!-- ドットボタン -->
+					<button class="button" id="button_dot">.</button>
+
+					<!-- 計算ボタン -->
+					<button class="button" id="button_calculation">=</button>
+
+					<!-- 足し算ボタン -->
+					<button class="button" id="button_addition">+</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+	
+	<script>
+
+	    // 画面に表示する文字列
+		let disResult = "0";
+
+		// 文字列として数字を代入する配列
+		let strArray = []
+
+		// 数字を代入する配列
+		let numberArray = [];
+		
+		// 演算子を保持するための配列
+		let operatorArray = [];
+
+		//直前に演算子ボタンを押したか、数値ボタンを押したか判断するためのフラグ
+		let opFlag = false;
+		let numFlag = false;
+		let totalFlag = false;
+
+		// 0ボタン押下時の処理
+		$("#button_0").on("click", function(){
+			//0で始まる場合かつ少数でない場合、入力しない
+			if(disResult.startsWith(0)){
+				if(!(disResult.includes("."))){
+					return false;
+				}
+			}
+			input("0");
+		});
+
+		// 00ボタン押下時の処理
+		$("#button_00").on("click", function(){
+
+			//入力値が空白の場合
+			if(totalFlag){
+				disResult = "0";
+			}
+
+			//0で始まる場合かつ、少数でない場合入力しない
+			if(disResult.startsWith(0)){
+				if(!(disResult.includes("."))){
+					return false;
+				}
+			}
+			console.log("00ボタンを押した時のdisResult:"+disResult);
+			input("00");
+			if(disResult == "00"){
+				disResult = "0";
+				input("0");
+			}
+		});
+
+		// ドットボタン押下時の処理
+		$("#button_dot").on("click", function(){
+			//小数点は複数入力できない
+			if(disResult.includes(".")){
+				//　キャンセルする
+				console.log("処理終了");
+				return false;
+			}
+			//入力値がない場合、
+			if(disResult === "0"){
+				input("0.");
+				return false;
+			}
+			input(".");
+		});
+
+		// 1ボタン押下時の処理
+		$("#button_1").on("click", function(){
+			input("1");
+		});
+
+		// 2ボタン押下時の処理
+		$("#button_2").on("click", function(){
+			input("2");
+		});
+
+		// 3ボタン押下時の処理
+		$("#button_3").on("click", function(){
+			input("3");
+		});
+
+		// 4ボタン押下時の処理
+		$("#button_4").on("click", function(){
+			input("4");
+		});
+
+		// 5ボタン押下時の処理
+		$("#button_5").on("click", function(){
+			input("5");
+		});
+
+		// 6ボタン押下時の処理
+		$("#button_6").on("click", function(){
+			input("6");
+		});
+
+		// 7ボタン押下時の処理
+		$("#button_7").on("click", function(){
+			input("7");
+		});
+
+		// 8ボタン押下時の処理
+		$("#button_8").on("click", function(){
+			input("8");
+		});
+
+		// 9ボタン押下時の処理
+		$("#button_9").on("click", function(){
+			input("9");
+		});
+
+		// 足し算ボタン押下時の処理
+		$("#button_addition").on("click", function(){
+			pushItem(disResult,"+");
+		});
+
+		// 引き算ボタン押下時の処理
+		$("#button_subtraction").on("click", function(){
+			pushItem(disResult,"-");
+		});
+
+		// 掛け算ボタン押下時の処理
+		$("#button_multiplication").on("click", function(){
+			pushItem(disResult,"*");
+		});
+
+		// 割り算ボタン押下時の処理
+		$("#button_division").on("click", function(){
+			pushItem(disResult,"/");
+		});
+
+		// 計算ボタン押下時の処理
+		$("#button_calculation").on("click", function(){
+			pushItem(disResult,"=");
+			disResult = getResult();
+			console.log("計算結果は" + disResult);
+		});
+
+		// 戻るボタン押下時の処理
+		$("#button_back").on("click", function(){
+			popEnd();
+		});
+
+		// クリアボタン押下時の処理
+		$("#button_c").on("click", function(){
+			clear();
+		});
+
+		// オールクリアボタン押下時の処理
+		$("#button_ac").on("click", function(){
+			allClear();
+		});
+
+		// 何かしらのボタン押下時の処理
+		$(".button").click(function(){
+			dis();
+		})
+
+		// ティスプレイに文字を入力する
+		function input(x){
+			// 直前に演算子ボタンをクリックしていたら
+			if(opFlag){
+				disResult="";
+				opFlag=false;
+			}
+			//計算結果が表示されてるときに数値が入力されたら
+			if(totalFlag){
+				disResult="";
+				totalFlag=false;
+			}
+			//小数点が含まれていないかつ
+			if(!(disResult.includes("."))){
+				//0で始まる場合
+				if(disResult.startsWith(0)){
+					disResult = "";
+				}
+			}
+			disResult += x;
+			// $("#display").val(disResult); 
+		}
+
+		//画面上に表示する
+		function dis(){
+			// 数値である場合、文字列に変換する
+			disResult = disResult.toString();
+			// 入力値がNullの場合、0を表示させる
+			if(disResult === ""){
+				console.log("なにもないよ");
+				disResult = "0";
+			}
+			$("#display").val(disResult);
+		};
+
+		// 末尾の一文字を削除
+		function popEnd(){
+			// disResultが文字列じゃなければ文字列に変換する
+			// if(!(isString(disResult))){
+			// 	disResult = disResult.toString();
+			// 	console.log("文字列に変換しました");
+			// }
+			disResult = disResult.slice(0,-1);
+		}
+
+		// 表示されてる文字を消去後、直前に表示していた文字を表示
+		function clear(){
+			disResult = "";
+		}
+
+		//すべての文字を削除
+		function allClear(){
+			disResult = "";
+			// 配列の中身をすべて削除
+			strArray.splice(0);
+			operatorArray.splice(0);
+		}
+
+		//数字と演算子をそれぞれの配列に保持するための関数
+		function pushItem(number,operator){
+			if(opFlag){
+				if(!(operator === "=")){
+					console.log("削除前の演算子配列"+operatorArray)
+					// 演算子配列の最後の値を削除する
+					operatorArray.pop();	
+					console.log("削除後の演算子配列"+operatorArray);
+					operatorArray.push(operator);
+					return;
+				}
+					
+			}
+			if(totalFlag){
+				totalFlag = false;
+			}
+			strArray.push(number);
+			operatorArray.push(operator);
+			opFlag = true;
+		}
+
+		// 計算結果を返す関数
+		function getResult(){
+			let total = 0;
+
+			//文字列を数値に変換して配列に代入
+			strArray.forEach(element => {
+				numberArray.push(Number(element));
+				console.log(numberArray);
+				console.log(operatorArray);
+			});
+			operatorArray.forEach(element => {
+				switch (element) {
+					case "+":
+						// console.log("+");
+						// 配列の先頭を取り出して計算する
+						total = numberArray.shift() + numberArray.shift();
+						
+						// 計算結果を配列に格納
+						// numberArray.push(total);
+						numberArray.unshift(total); 	
+						console.log("計算結果を変数に格納してるよ:"+numberArray);
+
+						break;
+					case "-":
+						// console.log("-");
+						total = numberArray.shift() - numberArray.shift();
+						// numberArray.push(total);
+						numberArray.unshift(total); 	
+						console.log("計算結果を変数に格納してるよ:"+numberArray);
+
+						break;
+					case "*":
+						// console.log("*");
+						total = numberArray.shift() * numberArray.shift();
+						// numberArray.push(total);
+						numberArray.unshift(total); 	
+						console.log("計算結果を変数に格納してるよ:"+numberArray);
+						break;
+					case "/":
+						// console.log("/");
+						total = numberArray.shift() / numberArray.shift();
+						// numberArray.push(total);	
+						numberArray.unshift(total); 	
+						
+						console.log("計算結果を変数に格納してるよ:"+numberArray);
+
+						break;
+					case "=":
+						// 演算子配列をすべて削除
+						operatorArray.splice(0);
+						numberArray.splice(0);
+						strArray.splice(0);
+						break;
+					default:
+						console.log("Unknown operator");
+				}
+			})
+			opFlag = false;
+			totalFlag = true;
+			return total;
+		}
+	</script>
+</body>
+
+</html>

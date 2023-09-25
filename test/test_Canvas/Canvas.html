@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>描画の手順</Canvas></title>
+    
+    <script>
+        let ctx;
+        function init(){
+            let canvas = document.getElementById("canvas");
+            ctx = canvas.getContext("2d");
+
+            ctx.strokeStyle = "#000000";
+            ctx.fillStyle = "#00FF00";
+            ctx.lineWidth = 2;
+            ctx.lineCap = "square";
+            ctx.shadowColor = "#000000";
+            ctx.shadowBlur = 20;
+
+            // 線を引く
+            ctx.beginPath();
+            ctx.moveTo(120, 260);
+            ctx.lineTo(200,310);
+            ctx.stroke();
+
+            // 線を引く
+            ctx.beginPath();
+            ctx.moveTo(200, 310);
+            ctx.lineTo(280,260);
+            ctx.stroke();
+
+
+            ctx.fillRect(240, 180, 30, 30);
+
+            // ctx.fillStyle("#FF0000");
+            ctx.fillRect(140, 180, 30, 30);
+
+            // 短形で輪郭を描く
+            ctx.strokeRect(100, 100, 220, 260);
+
+            // 三角形で耳を描く
+            drawTriangle(110, 100, true, true);
+            drawTriangle(220, 100, true, true);
+
+            // 円で鼻を描く
+            ctx.beginPath();
+            ctx.arc(200, 250, 10, 0, 2 *Math.PI);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // 三角形を描画する関数
+        function drawTriangle(x, y, isClose, isFill){
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + 40, y-50);
+            ctx.lineTo(x + 80, y);
+            if(isClose){
+                ctx.closePath();
+            }
+
+            if (isFill){
+                ctx.fill();
+            } else {
+                ctx.stroke();
+            }
+        }
+    </script>
+</head>
+    <body onload="init()">
+    <canvas id="canvas" width="700" height="1000"></canvas>
+</body>
+</html>

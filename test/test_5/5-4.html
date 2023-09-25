@@ -1,0 +1,48 @@
+<html>
+
+<head>
+	<!-- htmlファイルと同じフォルダにあるjQuery.jsを読み込む -->
+	<script type="text/javascript" src="../common/jQuery.js"></script>
+	<!-- 文字コードをUTF-8に設定（文字化け防止） -->
+	<meta charset="UTF-8">
+	<!-- タイトル -->
+	<title>練習問題</title>
+
+	<style>
+    	/* ここにCSSを書く */
+	</style>
+</head>
+
+<body>
+	<!-- ここに画面に表示する内容を書く -->
+	<div id="test">
+		<input type="text" id="text1">
+		+
+		<input type="text" id="text2">
+		<button id="button">ボタン</button>
+		<button id="delete">クリアボタン</button>
+	</div>
+	<div id="textarea"></div>
+
+
+	<script>
+	    // ここにJavaScriptを書く
+		
+		$("#button").on("click", function(){
+			var a = $.isNumeric($("#text1").val());
+			var b = $.isNumeric($("#text2").val());
+			if(a && b){
+				let inputValue = Number($("#text1").val())+Number($("#text2").val());
+				$("#textarea").append(inputValue);
+			} else {
+				alert("数値以外が入力されています。");
+			}
+		})
+
+		$("#delete").on("click", function(){
+			$("#textarea").text("");
+		})
+	</script>
+</body>
+
+</html>

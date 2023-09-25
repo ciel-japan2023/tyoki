@@ -1,0 +1,108 @@
+<html>
+
+<head>
+	<!-- htmlファイルと同じフォルダにあるjQuery.jsを読み込む -->
+	<script type="text/javascript" src="../common/jQuery.js"></script>
+	<!-- 文字コードをUTF-8に設定（文字化け防止） -->
+	<meta charset="UTF-8">
+	<!-- タイトル -->
+	<title>数字当てゲーム</title>
+
+	<style>
+    	/* ここにCSSを書く */
+
+		#top{
+			margin-bottom: 5%;
+		}
+
+		#history{
+			width: 50%;
+			height: 50%;
+			overflow-y: scroll;
+		}
+
+		#status{
+			margin-top: 5%;
+		}
+	</style>
+</head>
+
+<body>
+    <!-- ここに画面に表示する内容を書く -->
+	<div id="top">0~1000の間でランダムに生成された数字を当ててください。</div>
+	<label>入力された数字</label>
+	<div id="history">
+	</div>
+	
+	<div>
+		<label id="status">数字を入力してください。</label>
+		<br>
+		<input type="text"  id="text" autofocus />
+		<button id="button">Go</button>
+	</div>
+	
+	
+	<script>
+	    // ここにJavaScriptを書く
+		// ランダムな数字を生成（0から1000の間）
+        const targetNumber = Math.floor(Math.random() * 1001);
+
+		$("#button").on("click",function(){
+			const Num = $("#text").val();
+			
+			// ステータスチェック
+			checkStatus(Num);
+
+			// 数値の成否判断
+			guessNumber(Num,targetNumber);
+			
+			//入力欄をリセット
+			textReset();
+			$("#text").focus();
+		})
+
+		// 数値を予測する関数
+		function guessNumber(Num,target){
+			console.log(target);
+
+			// 数字以外が入力された場合は処理を終了する
+			if(!($.isNumeric(Num))){
+				return;
+			}
+			if(Num>target){
+				$("#history").append(Num + "大きいです。<br>");		
+			} else if(Num<target){
+				$("#history").append(Num + "小さいです。<br>");		
+			} else if(Num == target){
+				$("#history").append(Num + "正解です！<br>");		
+			}
+		}
+
+		// 状態を知らせるステータスを変更
+		function checkStatus(x){
+			if(x === ""){
+				$("#status").text("");
+				$("#status").css("color", "red");
+				$("#status").append("入力してください。");
+				// console.log("何も入力されてないです。");
+				// alert("入力してください。");
+			} else if(!($.isNumeric(x))){
+				$("#status").text("");
+				$("#status").append("数字以外が入力されました。数字を入力してください。");
+				$("#status").css("color", "red");
+				// alert("数字以外が入力されました。数字を入力してください。");
+			} else {
+				$("#status").text("");
+				$("#status").css("color", "black");
+				$("#status").append("数字を入力してください。");
+			}
+		}
+
+		// 入力値をリセットして空白に
+		function textReset(){
+			$("#text").val("");
+		}
+	</script>
+</body>
+
+</html>
